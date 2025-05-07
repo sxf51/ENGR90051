@@ -3,6 +3,9 @@ const redis = require('redis');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
+const fs = require('fs');
+const https = require('https');
+const http = require('http');
 
 // 创建Express应用
 const app = express();
@@ -12,6 +15,12 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(bodyParser.json());
 app.use(morgan('dev'));
+
+// 读取证书文件
+const options = {
+  key: fs.readFileSync('key.pem'),
+  cert: fs.readFileSync('cert.pem')
+};
 
 // 创建Redis客户端
 const redisClient = redis.createClient({
@@ -133,7 +142,8 @@ app.post('/api/user/:email/badges', (req, res) => {
   });
 });
 
-// 启动服务器
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+
+// 创建 HTTPS 服务器
+https.createServer(options, app).listen(3000, () => {
+  console.log('HTTPS server running on port 3000');
 });

@@ -155,7 +155,7 @@ export default {
   },
   created() {
     // 增加点击量
-    axios.post('http://localhost:3000/api/views/increment')
+    axios.post('https://localhost:3000/api/views/increment')
       .catch(error => console.error('Error incrementing views:', error));
     this.fetchViews();
     // 检查用户是否已登录
@@ -166,7 +166,7 @@ export default {
   methods: {
     async fetchViews() {
       try {
-        const response = await axios.get('http://localhost:3000/api/views');
+        const response = await axios.get('https://localhost:3000/api/views');
         this.views = response.data.views;
       } catch (error) {
         console.error('Error fetching views:', error);
