@@ -1,0 +1,78 @@
+{
+    "javascript": {
+        "formatter": {
+            "indentSize": 2,
+            "lineWidth": 100,
+            "quoteStyle": "single",
+            "semicolons": "always",
+            "trailingComma": "es5"
+        },
+        "linter": {
+            "rules": {
+                "no-unused-vars": "warn",
+                "no-undef": "error",
+                "no-console": "warn",
+                "prefer-const": "warn",
+                "arrow-body-style": ["warn", "as-needed"],
+                "arrow-parens": ["warn", "as-needed"],
+                "vue/component-name-in-template-casing": ["error", "PascalCase"],
+                "vue/html-indent": ["error", 2],
+                "vue/html-quotes": ["error", "double"],
+                "vue/max-attributes-per-line": ["error", {
+                    "singleline": 3,
+                    "multiline": 1
+                }],
+                "vue/no-unused-components": "warn",
+                "node/no-deprecated-api": "warn",
+                "node/no-missing-require": "error",
+                "import/no-unresolved": "error",
+                "import/named": "error",
+                "import/order": ["warn", {
+                    "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
+                    "newlines-between": "always"
+                }]
+            }
+        }
+    },
+    "vue": {
+        "formatter": {
+            "indentSize": 2,
+            "lineWidth": 100,
+            "quoteStyle": "double",
+            "semicolons": "always"
+        }
+    },
+    "typescript": {
+        "formatter": {
+            "indentSize": 2,
+            "lineWidth": 100,
+            "quoteStyle": "single",
+            "semicolons": "always"
+        },
+        "linter": {
+            "rules": {
+                "strict-boolean-expressions": "warn",
+                "no-unnecessary-type-assertion": "warn",
+                "no-unsafe-assignment": "error",
+                "explicit-function-return-type": "warn"
+            }
+        }
+    },
+    "css": {
+        "formatter": {
+            "indentSize": 2,
+            "lineWidth": 100
+        }
+    },
+    "json": {
+        "formatter": {
+            "indentSize": 2,
+            "lineWidth": 100
+        }
+    },
+    "markdown": {
+        "formatter": {
+            "lineWidth": 100
+        }
+    }
+} 

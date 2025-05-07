@@ -10,6 +10,8 @@
       <nav>
         <router-link to="/">Home</router-link>
         <router-link to="/map">Map</router-link>
+        <router-link to="/data-wipe">Data Wipe Guide</router-link>
+        <router-link to="/evaluate">Evaluate Your Device</router-link>
         <router-link to="/register">Register</router-link>
         <router-link to="/profile" v-if="isLoggedIn">Profile</router-link>
       </nav>
