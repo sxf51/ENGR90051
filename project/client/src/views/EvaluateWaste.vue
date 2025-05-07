@@ -244,8 +244,7 @@ export default {
       },
       linkAvailableBrands: [],
       linkAvailableModels: [],
-      generatedLink: '',
-      isLinkFormValid: false
+      generatedLink: ''
     };
   },
   computed: {
@@ -361,7 +360,7 @@ export default {
       this.showResult = true;
     },
     generateEvaluation() {
-      const { condition, age, type } = this.device;
+      const { condition, age } = this.device;
       
       // 计算估计价值
       this.calculateDeviceValue();
@@ -546,14 +545,17 @@ export default {
     generateLink() {
       const { type, brand, model } = this.linkDevice;
       
-      if (!type || !brand || !model) {
-        this.isLinkFormValid = false;
+      if (!this.isLinkFormValid) {
         return;
       }
       
-      // 生成链接
-      this.generatedLink = `${window.location.origin}/evaluate?type=${type}&brand=${brand}&model=${model}`;
-      this.isLinkFormValid = true;
+      // 生成链接，这里显式使用了type、brand和model变量
+      const queryParams = new URLSearchParams();
+      queryParams.set('type', type);
+      queryParams.set('brand', brand);
+      queryParams.set('model', model);
+      
+      this.generatedLink = `${window.location.origin}/evaluate?${queryParams.toString()}`;
     },
     copyLink() {
       // 复制链接到剪贴板

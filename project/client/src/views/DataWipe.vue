@@ -401,13 +401,13 @@ export default {
   methods: {
     findDeviceByParam(param) {
       // 遍历所有设备类别寻找匹配的设备
-      for (const [category, devices] of Object.entries(this.deviceCategories)) {
+      Object.values(this.deviceCategories).forEach(devices => {
         const device = devices.find(d => d.id === param);
         if (device) {
           this.selectedDevice = device;
           return;
         }
-      }
+      });
     },
     handleDeviceSelect() {
       // 用户从下拉列表选择了设备类别
@@ -443,14 +443,14 @@ export default {
       this.filteredDevices = [];
       
       // 在所有设备类别中搜索
-      for (const [category, devices] of Object.entries(this.deviceCategories)) {
+      Object.entries(this.deviceCategories).forEach(([categoryName, devices]) => {
         const matches = devices.filter(device => 
           device.name.toLowerCase().includes(query) || 
-          category.toLowerCase().includes(query)
+          categoryName.toLowerCase().includes(query)
         );
         
         this.filteredDevices.push(...matches);
-      }
+      });
     }
   }
 };
