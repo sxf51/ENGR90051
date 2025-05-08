@@ -145,6 +145,8 @@
 <script>
 import axios from 'axios';
 
+import { HOST_URL, SERVER_PORT } from '../config';
+
 export default {
   name: 'App',
   data() {
@@ -155,7 +157,7 @@ export default {
   },
   created() {
     // 增加点击量
-    axios.post('https://localhost:3000/api/views/increment')
+    axios.post(HOST_URL + `:${SERVER_PORT}/api/views/increment`)
       .catch(error => console.error('Error incrementing views:', error));
     this.fetchViews();
     // 检查用户是否已登录
@@ -166,7 +168,7 @@ export default {
   methods: {
     async fetchViews() {
       try {
-        const response = await axios.get('https://localhost:3000/api/views');
+        const response = await axios.get(HOST_URL + `:${SERVER_PORT}/api/views`);
         this.views = response.data.views;
       } catch (error) {
         console.error('Error fetching views:', error);

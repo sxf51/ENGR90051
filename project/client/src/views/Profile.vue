@@ -35,6 +35,8 @@
   
   <script>
   import axios from 'axios';
+
+  import {HOST_URL, SERVER_PORT} from '../../config'
   
   export default {
     name: 'UserProfile',
@@ -55,7 +57,7 @@
         }
         
         try {
-          const response = await axios.get(`http://localhost:3000/api/user/${userEmail}`);
+          const response = await axios.get(HOST_URL + `:${SERVER_PORT}/api/user/${userEmail}`);
           this.user = response.data;
         } catch (error) {
           console.error('Error fetching user data:', error);
@@ -84,7 +86,7 @@
       },
       async addParticipationBadge() {
         try {
-          await axios.post(`http://localhost:3000/api/user/${this.user.email}/badges`, {
+          await axios.post(HOST_URL + `:${SERVER_PORT}/api/user/${this.user.email}/badges`, {
             badge: 'participant'
           });
           

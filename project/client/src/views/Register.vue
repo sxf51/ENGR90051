@@ -44,6 +44,8 @@
   
   <script>
   import axios from 'axios';
+
+  import { HOST_URL, SERVER_PORT } from '../../config';
   
   export default {
     name: 'UserRegister',
@@ -61,7 +63,7 @@
     methods: {
       async handleSubmit() {
         try {
-          // const response = await axios.post('http://localhost:3000/api/register', this.form);
+          // const response = await axios.post(HOST_URL + `:${SERVER_PORT}/api/register`, this.form);
           
           this.message = 'Registration Successful! ';
           this.isSuccess = true;
@@ -70,7 +72,7 @@
           this.$emit('login', this.form.email);
           
           // 添加欢迎奖章
-          await axios.post(`http://localhost:3000/api/user/${this.form.email}/badges`, {
+          await axios.post(HOST_URL + `:${SERVER_PORT}/api/user/${this.form.email}/badges`, {
             badge: 'welcome'
           });
           
@@ -84,7 +86,7 @@
           // 3秒后跳转到个人资料页
           setTimeout(() => {
             this.$router.push('/profile');
-          }, 3000);
+          }, SERVER_PORT);
         } catch (error) {
           this.message = error.response?.data?.error || 'Failed. Please try again';
           this.isSuccess = false;

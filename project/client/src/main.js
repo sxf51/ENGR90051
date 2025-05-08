@@ -7,11 +7,13 @@ import axios from 'axios'        // 导入HTTP客户端
 import { LMap, LTileLayer, LMarker, LPopup } from 'vue3-leaflet'  
 import 'leaflet/dist/leaflet.css'
 
+import { HOST_URL, SERVER_PORT } from '../config';
+
 // 创建Vue应用实例
 const app = createApp(App)
 
 // 配置axios
-axios.defaults.baseURL = 'http://localhost:3000/api'
+axios.defaults.baseURL = HOST_URL + `:${SERVER_PORT}/api`
 app.config.globalProperties.$axios = axios
 
 // 全局注册Leaflet组件（Vue 3方式）
