@@ -21,11 +21,14 @@
         <router-view @login="handleLogin" />
       </main>
       <body class="container" v-if="!$route.meta.hideBody">
-
+        <div class="chat-box">
         <config-provider :global-config="enConfig">
           <t-chat
+            clear-history
             :data="chatData"
             :text-loading="loading"
+            :is-stream-load="isStreamLoad"
+            @clear="clearConfirm"
           >
             <template #name="{ item }">
               {{ item?.name || 'admin' }}
@@ -40,10 +43,11 @@
               <t-chat-content :content="item?.content" />
             </template>
             <template #footer>
-              <t-chat-input @send="handleSend" />
+              <t-chat-input :stop-disabled="isStreamLoad" @send="inputEnter" @stop="handleStop"/>
             </template>
           </t-chat>
         </config-provider>
+        </div>
 
         <section id="problem" class="content-section">
               <h2>The Growing E-Waste Problem</h2>
@@ -183,6 +187,7 @@ export default {
       views: 0,
       isLoggedIn: true,
       loading: false,
+      isStreamLoad: false,
       chatData: [
         {
           avatar: 'https://tdesign.gtimg.com/site/chat-avatar.png',
@@ -222,6 +227,84 @@ export default {
       } catch (error) {
         console.error('Error fetching views:', error);
       }
+    },
+    clearConfirm() {
+      this.chatData = [];
+    },
+    handleStop () {
+      this.isStreamLoad = false;
+    },
+    inputEnter (inputValue) {
+      if (this.isStreamLoad) {
+        return;
+      }
+      if (!inputValue) return;
+      this.isStreamLoad = true;
+      this.loading = true;
+      // 模拟接口请求响应中
+      setTimeout(() => {
+        this.chatData = [
+        {
+          avatar: 'https://tdesign.gtimg.com/site/chat-avatar.png',
+          name: 'E-waste AI',
+          datetime: 'Today at 16:39',
+          content: `Recycling your old iPhone is a great way to reduce e-waste and potentially earn some money or help the environment. Here are some options for recycling your old iPhone:
+
+### **1. Apple Recycling Program (Apple Trade In)**  
+📍 **Where:** Online or at an Apple Store  
+🔗 [Apple Trade In Website](https://www.apple.com/shop/trade-in)  
+✅ **How it works:**  
+   - Get an estimate for your iPhone’s trade-in value.  
+   - If eligible, you’ll receive an Apple Gift Card or credit toward a new device.  
+   - If the device has no value, Apple will recycle it for free.  
+
+### **2. Carrier Trade-In Programs**  
+📍 **Where:** Major carriers like Verizon, AT&T, T-Mobile, or Sprint  
+✅ **How it works:**  
+   - Trade in your old iPhone for credit toward a new phone or bill discount.  
+   - Check your carrier’s website for details.  
+
+### **3. Electronics Retailers**  
+📍 **Where:** Best Buy, Amazon, Gazelle, Decluttr  
+✅ **How it works:**  
+   - **Best Buy** accepts old phones for recycling (sometimes offers gift cards).  
+   - **Amazon Trade-In** offers gift cards for eligible devices.  
+   - **Gazelle & Decluttr** pay cash for iPhones in good condition.  
+
+### **4. Eco-Friendly Recycling (If Broken/Unusable)**  
+📍 **Where:** Certified e-waste recyclers  
+✅ **Options:**  
+   - **Call2Recycle** ([www.call2recycle.org](https://www.call2recycle.org))  
+   - **e-Stewards** ([www.e-stewards.org](https://www.e-stewards.org))  
+   - **Earth911** ([www.earth911.com](https://www.earth911.com)) – Locate nearby drop-off centers.  
+
+### **5. Donate for a Cause**  
+📍 **Where:** Nonprofits like:  
+   - **Cell Phones for Soldiers** ([www.cellphonesforsoldiers.com](https://www.cellphonesforsoldiers.com))  
+   - **National Coalition Against Domestic Violence** ([www.ncadv.org](https://www.ncadv.org))  
+
+### **Before You Recycle:**  
+- **Back up your data** (iCloud or iTunes).  
+- **Sign out of iCloud & erase your iPhone** (Settings > General > Reset > Erase All Content and Settings).  
+- **Remove SIM card** (if applicable).  
+
+Would you like help estimating your iPhone’s trade-in value? Let me know the model and condition! 😊`,
+          role: 'assistant',
+        },
+        {
+          avatar: 'https://tdesign.gtimg.com/site/avatar.jpg',
+          name: 'Admin',
+          datetime: 'Today at 16:39',
+          content: 'Where can I recycle my old iPhone?',
+          role: 'user',
+        },
+      ]
+      this.loading = false;
+      }, 300);
+      //   模拟流式数据加载中
+      setTimeout(() => {
+        this.isStreamLoad = false;
+      }, 5000);
     },
     handleLogin(email) {
       this.isLoggedIn = true;
@@ -280,6 +363,87 @@ footer {
   color: white;
   padding: 1rem;
   margin-top: auto;
+}
+
+/** Chatbox  */
+/* 应用滚动条样式 */
+::-webkit-scrollbar-thumb {
+  background-color: var(--td-scrollbar-color);
+}
+::-webkit-scrollbar-thumb:horizontal:hover {
+  background-color: var(--td-scrollbar-hover-color);
+}
+::-webkit-scrollbar-track {
+  background-color: var(--td-scroll-track-color);
+}
+.chat-box {
+  position: relative;
+  .bottomBtn {
+    position: absolute;
+    left: 50%;
+    margin-left: -20px;
+    bottom: 210px;
+    padding: 0;
+    border: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.08), 0px 16px 24px 2px rgba(0, 0, 0, 0.04),
+      0px 6px 30px 5px rgba(0, 0, 0, 0.05);
+  }
+  .to-bottom {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #dcdcdc;
+    box-sizing: border-box;
+    background: var(--td-bg-color-container);
+    border-radius: 50%;
+    font-size: 24px;
+    line-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .t-icon {
+      font-size: 24px;
+    }
+  }
+}
+
+.model-select {
+  display: flex;
+  align-items: center;
+  .t-select {
+    width: 112px;
+    height: 32px;
+    margin-right: 8px;
+    .t-input {
+      border-radius: 32px;
+      padding: 0 15px;
+    }
+  }
+  .check-box {
+    width: 112px;
+    height: 32px;
+    border-radius: 32px;
+    border: 0;
+    background: #e7e7e7;
+    color: rgba(0, 0, 0, 0.9);
+    box-sizing: border-box;
+    flex: 0 0 auto;
+    .t-button__text {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      span {
+        margin-left: 4px;
+      }
+    }
+  }
+  .check-box.is-active {
+    border: 1px solid #d9e1ff;
+    background: #f2f3ff;
+    color: var(--td-brand-color);
+  }
 }
 
 /* Global Styles */
