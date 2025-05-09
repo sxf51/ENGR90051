@@ -21,14 +21,38 @@
         <router-view @login="handleLogin" />
       </main>
       <body class="container" v-if="!$route.meta.hideBody">
+
+        <config-provider :global-config="enConfig">
+          <t-chat
+            :data="chatData"
+            :text-loading="loading"
+          >
+            <template #name="{ item }">
+              {{ item?.name || 'admin' }}
+            </template>
+            <template #avatar="{ item }">
+              <t-avatar :image="item?.avatar" />
+            </template>
+            <template #datetime="{ item }">
+              {{ item?.datetime }}
+            </template>
+            <template #content="{ item }">
+              <t-chat-content :content="item?.content" />
+            </template>
+            <template #footer>
+              <t-chat-input @send="handleSend" />
+            </template>
+          </t-chat>
+        </config-provider>
+
         <section id="problem" class="content-section">
               <h2>The Growing E-Waste Problem</h2>
               <img src="./images/e-waste-pile.jpg" alt="Pile of electronic waste" class="section-img">
               <p>Electronic waste, or e-waste, refers to discarded electrical or electronic devices. Used electronics which are destined for refurbishment, reuse, resale, salvage recycling through material recovery, or disposal are also considered e-waste.</p>
               <p>With the rapid advancement of technology and planned obsolescence of electronic devices, e-waste has become the fastest-growing waste stream in the world. Many of these products contain toxic materials that can leach into soil and water when improperly disposed of.</p>
-          </section>
+        </section>
 
-          <section id="stats" class="content-section">
+        <section id="stats" class="content-section">
               <h2>E-Waste by the Numbers</h2>
               <div class="stats-grid">
                   <div class="stat-item">
@@ -49,7 +73,7 @@
                   </div>
               </div>
               <p class="source">Source: Global E-waste Statistics Partnership, 2020</p>
-          </section>
+        </section>
 
           <section id="solutions" class="content-section">
               <h2>What Can We Do?</h2>
@@ -142,6 +166,11 @@
   </div>
 </template>
 
+<script setup>
+import { ConfigProvider } from '@tdesign-vue-next/chat/es/config-provider';
+import enConfig from 'tdesign-vue-next/es/locale/en_US';
+</script>
+
 <script>
 import axios from 'axios';
 
@@ -152,7 +181,27 @@ export default {
   data() {
     return {
       views: 0,
-      isLoggedIn: false
+      isLoggedIn: true,
+      loading: false,
+      chatData: [
+        {
+          avatar: 'https://tdesign.gtimg.com/site/chat-avatar.png',
+          name: 'E-waste AI',
+          datetime: 'Today at 16:38',
+          content: 'You can recycle your old iPhone through **Apple\'s Trade In program** (online or in-store), \
+          **carriers like Verizon/AT&T**, **Best Buy**, **Amazon Trade-In**, or **e-waste recyclers like Call2Recycle**. \
+          For broken phones, try **eco-friendly recyclers** or donate to charities like **Cell Phones for Soldiers**. \
+          Always wipe your data first!',
+          role: 'assistant',
+        },
+        {
+          avatar: 'https://tdesign.gtimg.com/site/avatar.jpg',
+          name: 'Admin',
+          datetime: 'Today at 16:38',
+          content: 'Where can I recycle my old iPhone?',
+          role: 'user',
+        },
+      ]
     };
   },
   created() {
@@ -333,6 +382,7 @@ nav a {
 nav a:hover {
     color: var(--accent-color);
 }
+
 
 /* Content Sections */
 .content-section {
