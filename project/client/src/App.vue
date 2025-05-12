@@ -10,8 +10,10 @@
       <nav>
         <router-link to="/">Home</router-link>
         <router-link to="/map">Map</router-link>
-        <router-link to="/data-wipe">Data Wipe Guide</router-link>
         <router-link to="/evaluate">Evaluate Your Device</router-link>
+        <router-link to="/data-wipe">Data Wipe Guide</router-link>
+        <router-link to="/scan" >Scan QR Code</router-link>
+        <router-link to="/rewards" >Rewards</router-link>
         <router-link to="/register">Register</router-link>
         <router-link to="/profile" v-if="isLoggedIn">Profile</router-link>
       </nav>
@@ -21,34 +23,6 @@
         <router-view @login="handleLogin" />
       </main>
       <body class="container" v-if="!$route.meta.hideBody">
-        <div class="chat-box">
-        <config-provider :global-config="enConfig">
-          <t-chat
-            clear-history
-            :data="chatData"
-            :text-loading="loading"
-            :is-stream-load="isStreamLoad"
-            @clear="clearConfirm"
-          >
-            <template #name="{ item }">
-              {{ item?.name || 'admin' }}
-            </template>
-            <template #avatar="{ item }">
-              <t-avatar :image="item?.avatar" />
-            </template>
-            <template #datetime="{ item }">
-              {{ item?.datetime }}
-            </template>
-            <template #content="{ item }">
-              <t-chat-content :content="item?.content" />
-            </template>
-            <template #footer>
-              <t-chat-input :stop-disabled="isStreamLoad" @send="inputEnter" @stop="handleStop"/>
-            </template>
-          </t-chat>
-        </config-provider>
-        </div>
-
         <section id="problem" class="content-section">
               <h2>The Growing E-Waste Problem</h2>
               <img src="./images/e-waste-pile.jpg" alt="Pile of electronic waste" class="section-img">
@@ -167,6 +141,106 @@
               </div>
           </div>
     </footer>
+    
+    <!-- 浮动聊天框 -->
+    <div class="floating-chat-wrapper" :class="{ 'chat-expanded': isChatExpanded }">
+      <div class="chat-toggle" @click="toggleChat">
+        <span v-if="!isChatExpanded">💬</span>
+        <span v-else>✖</span>
+      </div>
+      <div class="floating-chat-box" v-show="isChatExpanded">
+        <config-provider :global-config="enConfig">
+          <t-chat
+            clear-history
+            :data="chatData"
+            :text-loading="loading"
+            :is-stream-load="isStreamLoad"
+            @clear="clearConfirm"
+          >
+            <template #name="{ item }">
+              {{ item?.name || 'admin' }}
+            </template>
+            <template #avatar="{ item }">
+              <t-avatar :image="item?.avatar" />
+            </template>
+            <template #datetime="{ item }">
+              {{ item?.datetime }}
+            </template>
+            <template #content="{ item }">
+              <t-chat-content :content="item?.content" />
+            </template>
+            <template #footer>
+              <t-chat-input :stop-disabled="isStreamLoad" @send="inputEnter" @stop="handleStop"/>
+            </template>
+          </t-chat>
+        </config-provider>
+      </div>
+    </div>
+    
+    <!-- 浮动回收按钮 -->
+    <div class="floating-recycle-btn" @click="showRecycleInstructions">
+      <span class="recycle-icon">♻️</span>
+      <span class="recycle-text">Recycle Now</span>
+    </div>
+
+    <!-- Recycling Instructions Modal -->
+    <div class="instructions-modal" v-if="showInstructionsModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>How to Recycle Your Electronics</h3>
+          <span class="modal-close" @click="closeInstructionsModal">×</span>
+        </div>
+        <div class="recycling-steps">
+          <div class="recycling-step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <h4>Evaluate Your Device</h4>
+              <p>First, determine if your device should be reused, repaired, donated, or recycled based on its condition and age. Our evaluation tool can help you make the best decision.</p>
+            </div>
+          </div>
+          <div class="recycling-step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <h4>Backup Your Data</h4>
+              <p>Before recycling, make sure to backup any important data from your device to the cloud or an external drive.</p>
+            </div>
+          </div>
+          <div class="recycling-step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <h4>Wipe Your Data</h4>
+              <p>Protect your privacy by completely erasing all personal data from your device. Visit our Data Wipe Guide for detailed instructions.</p>
+            </div>
+          </div>
+          <div class="recycling-step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+              <h4>Find a Recycling Center</h4>
+              <p>Locate a certified e-waste recycling center near you. Many electronics retailers also offer take-back programs.</p>
+            </div>
+          </div>
+          <div class="recycling-step">
+            <div class="step-number">5</div>
+            <div class="step-content">
+              <h4>Drop Off Your Device</h4>
+              <p>Take your device to the recycling center. Some locations may offer pickup services for larger items.</p>
+            </div>
+          </div>
+          <div class="recycling-step">
+            <div class="step-number">6</div>
+            <div class="step-content">
+              <h4>Get Your QR Code</h4>
+              <p>After recycling, scan the QR code at the recycling point to earn environmental points that can be redeemed for rewards!</p>
+            </div>
+          </div>
+        </div>
+        <div class="action-buttons">
+          <button @click="navigateTo('/evaluate')" class="action-button evaluate-btn">Evaluate Your Device</button>
+          <button @click="navigateTo('/map')" class="action-button find-center-btn">Find Recycling Centers</button>
+          <button @click="navigateTo('/data-wipe')" class="action-button learn-more-btn">Data Wipe Guide</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -188,6 +262,8 @@ export default {
       isLoggedIn: true,
       loading: false,
       isStreamLoad: false,
+      isChatExpanded: false,
+      showInstructionsModal: false,
       chatData: [
         {
           avatar: 'https://tdesign.gtimg.com/site/chat-avatar.png',
@@ -254,15 +330,15 @@ export default {
 📍 **Where:** Online or at an Apple Store  
 🔗 [Apple Trade In Website](https://www.apple.com/shop/trade-in)  
 ✅ **How it works:**  
-   - Get an estimate for your iPhone’s trade-in value.  
-   - If eligible, you’ll receive an Apple Gift Card or credit toward a new device.  
+   - Get an estimate for your iPhone's trade-in value.  
+   - If eligible, you'll receive an Apple Gift Card or credit toward a new device.  
    - If the device has no value, Apple will recycle it for free.  
 
 ### **2. Carrier Trade-In Programs**  
 📍 **Where:** Major carriers like Verizon, AT&T, T-Mobile, or Sprint  
 ✅ **How it works:**  
    - Trade in your old iPhone for credit toward a new phone or bill discount.  
-   - Check your carrier’s website for details.  
+   - Check your carrier's website for details.  
 
 ### **3. Electronics Retailers**  
 📍 **Where:** Best Buy, Amazon, Gazelle, Decluttr  
@@ -288,7 +364,7 @@ export default {
 - **Sign out of iCloud & erase your iPhone** (Settings > General > Reset > Erase All Content and Settings).  
 - **Remove SIM card** (if applicable).  
 
-Would you like help estimating your iPhone’s trade-in value? Let me know the model and condition! 😊`,
+Would you like help estimating your iPhone's trade-in value? Let me know the model and condition! 😊`,
           role: 'assistant',
         },
         {
@@ -309,6 +385,19 @@ Would you like help estimating your iPhone’s trade-in value? Let me know the m
     handleLogin(email) {
       this.isLoggedIn = true;
       localStorage.setItem('userEmail', email);
+    },
+    toggleChat() {
+      this.isChatExpanded = !this.isChatExpanded;
+    },
+    showRecycleInstructions() {
+      this.showInstructionsModal = true;
+    },
+    closeInstructionsModal() {
+      this.showInstructionsModal = false;
+    },
+    navigateTo(route) {
+      this.closeInstructionsModal();
+      this.$router.push(route);
     }
   }
 };
@@ -378,72 +467,81 @@ footer {
 }
 .chat-box {
   position: relative;
-  .bottomBtn {
-    position: absolute;
-    left: 50%;
-    margin-left: -20px;
-    bottom: 210px;
-    padding: 0;
-    border: 0;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.08), 0px 16px 24px 2px rgba(0, 0, 0, 0.04),
-      0px 6px 30px 5px rgba(0, 0, 0, 0.05);
-  }
-  .to-bottom {
-    width: 40px;
-    height: 40px;
-    border: 1px solid #dcdcdc;
-    box-sizing: border-box;
-    background: var(--td-bg-color-container);
-    border-radius: 50%;
-    font-size: 24px;
-    line-height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    .t-icon {
-      font-size: 24px;
-    }
-  }
+}
+
+.chat-box .bottomBtn {
+  position: absolute;
+  left: 50%;
+  margin-left: -20px;
+  bottom: 210px;
+  padding: 0;
+  border: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.08), 0px 16px 24px 2px rgba(0, 0, 0, 0.04),
+    0px 6px 30px 5px rgba(0, 0, 0, 0.05);
+}
+
+.chat-box .to-bottom {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #dcdcdc;
+  box-sizing: border-box;
+  background: var(--td-bg-color-container);
+  border-radius: 50%;
+  font-size: 24px;
+  line-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-box .to-bottom .t-icon {
+  font-size: 24px;
 }
 
 .model-select {
   display: flex;
   align-items: center;
-  .t-select {
-    width: 112px;
-    height: 32px;
-    margin-right: 8px;
-    .t-input {
-      border-radius: 32px;
-      padding: 0 15px;
-    }
-  }
-  .check-box {
-    width: 112px;
-    height: 32px;
-    border-radius: 32px;
-    border: 0;
-    background: #e7e7e7;
-    color: rgba(0, 0, 0, 0.9);
-    box-sizing: border-box;
-    flex: 0 0 auto;
-    .t-button__text {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      span {
-        margin-left: 4px;
-      }
-    }
-  }
-  .check-box.is-active {
-    border: 1px solid #d9e1ff;
-    background: #f2f3ff;
-    color: var(--td-brand-color);
-  }
+}
+
+.model-select .t-select {
+  width: 112px;
+  height: 32px;
+  margin-right: 8px;
+}
+
+.model-select .t-select .t-input {
+  border-radius: 32px;
+  padding: 0 15px;
+}
+
+.model-select .check-box {
+  width: 112px;
+  height: 32px;
+  border-radius: 32px;
+  border: 0;
+  background: #e7e7e7;
+  color: rgba(0, 0, 0, 0.9);
+  box-sizing: border-box;
+  flex: 0 0 auto;
+}
+
+.model-select .check-box .t-button__text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.model-select .check-box .t-button__text span {
+  margin-left: 4px;
+}
+
+.model-select .check-box.is-active {
+  border: 1px solid #d9e1ff;
+  background: #f2f3ff;
+  color: var(--td-brand-color);
 }
 
 /* Global Styles */
@@ -745,5 +843,259 @@ footer p {
     .stats-grid {
         grid-template-columns: 1fr;
     }
+}
+
+/* 浮动聊天框样式 */
+.floating-chat-wrapper {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.chat-toggle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 24px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.chat-toggle:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.floating-chat-box {
+  width: 350px;
+  height: 500px;
+  background-color: white;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+/* 浮动回收按钮样式 */
+.floating-recycle-btn {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 1000;
+  background-color: #4caf50;
+  color: white;
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  border-radius: 30px;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.floating-recycle-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  background-color: #3d8b40;
+}
+
+.recycle-icon {
+  font-size: 24px;
+  margin-right: 8px;
+}
+
+.recycle-text {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+/* 移动设备上的响应式样式 */
+@media (max-width: 768px) {
+  .floating-recycle-btn {
+    bottom: 90px;
+    left: 20px;
+    padding: 10px 16px;
+  }
+  
+  .recycle-text {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .floating-chat-box {
+    width: 300px;
+    height: 450px;
+  }
+  
+  .floating-recycle-btn {
+    padding: 8px 12px;
+  }
+  
+  .recycle-icon {
+    font-size: 20px;
+    margin-right: 5px;
+  }
+  
+  .recycle-text {
+    font-size: 12px;
+  }
+}
+
+/* Instructions Modal */
+.instructions-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  overflow-y: auto;
+  padding: 20px 0;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  padding: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  position: relative;
+  overflow-y: auto;
+  margin: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 10px;
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: #2c3e50;
+}
+
+.modal-close {
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #666;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  background-color: #f1f1f1;
+  transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+  color: #000;
+  background-color: #e0e0e0;
+}
+
+.recycling-steps {
+  margin-top: 20px;
+}
+
+.recycling-step {
+  display: flex;
+  margin-bottom: 20px;
+  align-items: flex-start;
+}
+
+.step-number {
+  background-color: #4caf50;
+  color: white;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 15px;
+  flex-shrink: 0;
+}
+
+.step-content h4 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  color: #2c3e50;
+}
+
+.step-content p {
+  margin: 0;
+  color: #666;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.action-button {
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+  flex: 1;
+  min-width: 150px;
+  text-align: center;
+}
+
+.evaluate-btn {
+  background-color: #ff9800;
+  color: white;
+  border: none;
+}
+
+.evaluate-btn:hover {
+  background-color: #e68a00;
+}
+
+.find-center-btn {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+}
+
+.find-center-btn:hover {
+  background-color: #3d8b40;
+}
+
+.learn-more-btn {
+  background-color: transparent;
+  color: #2196f3;
+  border: 1px solid #2196f3;
+}
+
+.learn-more-btn:hover {
+  background-color: #e3f2fd;
 }
 </style>

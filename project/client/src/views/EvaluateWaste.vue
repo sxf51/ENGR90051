@@ -111,49 +111,6 @@
         <button @click="resetForm" class="reset-btn">Evaluate Another Device</button>
       </div>
     </div>
-    
-    <!-- 生成链接部分 -->
-    <div class="generate-link-section">
-      <h2>Generate Device Link</h2>
-      <p>Create a link with pre-filled information for this device. Users can scan a QR code or click this link to immediately see the evaluation for this specific device.</p>
-      
-      <div class="form-group">
-        <label for="link-device-type">Device Type<span class="required">*</span></label>
-        <select id="link-device-type" v-model="linkDevice.type" class="form-control" @change="onLinkTypeChange">
-          <option value="" disabled>Select device type</option>
-          <option v-for="type in deviceTypes" :key="type" :value="type">{{ type }}</option>
-        </select>
-      </div>
-      
-      <div class="form-group">
-        <label for="link-device-brand">Brand<span class="required">*</span></label>
-        <select id="link-device-brand" v-model="linkDevice.brand" class="form-control" @change="onLinkBrandChange">
-          <option value="" disabled>Select brand</option>
-          <option v-for="brand in linkAvailableBrands" :key="brand" :value="brand">{{ brand }}</option>
-        </select>
-      </div>
-      
-      <div class="form-group">
-        <label for="link-device-model">Model<span class="required">*</span></label>
-        <select id="link-device-model" v-model="linkDevice.model" class="form-control">
-          <option value="" disabled>Select model</option>
-          <option v-for="model in linkAvailableModels" :key="model" :value="model">{{ model }}</option>
-        </select>
-      </div>
-      
-      <div class="form-actions">
-        <button @click="generateLink" class="generate-btn" :disabled="!isLinkFormValid">Generate Link</button>
-      </div>
-      
-      <div v-if="generatedLink" class="generated-link-container">
-        <h3>Your Device Link:</h3>
-        <div class="link-display">
-          <p>{{ generatedLink }}</p>
-          <button @click="copyLink" class="copy-btn">Copy Link</button>
-        </div>
-        <p class="link-instructions">Users who access this link will have the device type, brand, and model automatically filled in the evaluation form.</p>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -236,15 +193,7 @@ export default {
       },
       deviceValue: 0,
       availableBrands: [],
-      availableModels: [],
-      linkDevice: {
-        type: '',
-        brand: '',
-        model: ''
-      },
-      linkAvailableBrands: [],
-      linkAvailableModels: [],
-      generatedLink: ''
+      availableModels: []
     };
   },
   computed: {
@@ -255,9 +204,6 @@ export default {
       if (category === 'recycle') return 'recommendation-recycle';
       if (category === 'donate') return 'recommendation-donate';
       return '';
-    },
-    isLinkFormValid() {
-      return this.linkDevice.type && this.linkDevice.brand && this.linkDevice.model;
     }
   },
   mounted() {
@@ -513,67 +459,6 @@ export default {
       this.availableModels = [];
       this.deviceValue = 0;
       this.showResult = false;
-    },
-    onLinkTypeChange() {
-      // 重置品牌和型号
-      this.linkDevice.brand = '';
-      this.linkDevice.model = '';
-      
-      // 根据选择的设备类型更新可用品牌
-      if (this.linkDevice.type && this.brandsByType[this.linkDevice.type]) {
-        this.linkAvailableBrands = this.brandsByType[this.linkDevice.type];
-      } else {
-        this.linkAvailableBrands = [];
-      }
-      
-      this.linkAvailableModels = [];
-    },
-    onLinkBrandChange() {
-      // 重置型号
-      this.linkDevice.model = '';
-      
-      // 根据选择的品牌更新可用型号
-      if (this.linkDevice.brand && this.modelsByBrand[this.linkDevice.brand]) {
-        this.linkAvailableModels = this.modelsByBrand[this.linkDevice.brand];
-      } else if (this.linkDevice.brand) {
-        // 如果没有为此品牌定义特定型号，使用"其他"通用型号
-        this.linkAvailableModels = this.modelsByBrand['Other'] || ['Various Models'];
-      } else {
-        this.linkAvailableModels = [];
-      }
-    },
-    generateLink() {
-      const { type, brand, model } = this.linkDevice;
-      
-      if (!this.isLinkFormValid) {
-        return;
-      }
-      
-      // 生成链接，这里显式使用了type、brand和model变量
-      const queryParams = new URLSearchParams();
-      queryParams.set('type', type);
-      queryParams.set('brand', brand);
-      queryParams.set('model', model);
-      
-      this.generatedLink = `${window.location.origin}/evaluate?${queryParams.toString()}`;
-    },
-    copyLink() {
-      // 复制链接到剪贴板
-      navigator.clipboard.writeText(this.generatedLink)
-        .then(() => {
-          alert('Link copied to clipboard!');
-        })
-        .catch(err => {
-          console.error('Could not copy link: ', err);
-          // 备选方法，创建一个临时文本区域
-          const textArea = document.createElement('textarea');
-          textArea.value = this.generatedLink;
-          document.body.appendChild(textArea);
-          textArea.select();
-          document.execCommand('copy');
-          document.body.removeChild(textArea);
-          alert('Link copied to clipboard!');
-        });
     }
   }
 };
@@ -593,7 +478,7 @@ export default {
   margin-bottom: 30px;
 }
 
-.evaluation-form, .evaluation-result, .generate-link-section {
+.evaluation-form, .evaluation-result {
   background: #f8f9fa;
   border-radius: 8px;
   padding: 25px;
@@ -668,12 +553,12 @@ button:disabled {
   background-color: #5a6268;
 }
 
-.evaluate-btn, .generate-btn {
+.evaluate-btn {
   background-color: #4caf50;
   color: white;
 }
 
-.evaluate-btn:hover, .generate-btn:hover {
+.evaluate-btn:hover {
   background-color: #3d8b40;
 }
 
@@ -748,60 +633,6 @@ button:disabled {
   color: #2c3e50;
 }
 
-/* 生成链接部分样式 */
-.generate-link-section {
-  margin-top: 40px;
-}
-
-.generate-link-section h2 {
-  color: #2c3e50;
-  margin-bottom: 15px;
-}
-
-.generated-link-container {
-  margin-top: 25px;
-  padding: 15px;
-  background-color: #e3f2fd;
-  border-radius: 6px;
-}
-
-.link-display {
-  display: flex;
-  align-items: center;
-  padding: 10px;
-  background-color: white;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  margin: 10px 0;
-}
-
-.link-display p {
-  flex: 1;
-  overflow-x: auto;
-  font-family: monospace;
-  margin: 0;
-  padding: 5px;
-  word-break: break-all;
-}
-
-.copy-btn {
-  background-color: #007bff;
-  color: white;
-  padding: 8px 15px;
-  margin-left: 10px;
-  white-space: nowrap;
-}
-
-.copy-btn:hover {
-  background-color: #0069d9;
-}
-
-.link-instructions {
-  font-size: 14px;
-  color: #6c757d;
-  margin-top: 10px;
-}
-
 @media (max-width: 768px) {
   .evaluate-waste-container {
     padding: 15px;
@@ -813,19 +644,6 @@ button:disabled {
   }
   
   button {
-    width: 100%;
-  }
-  
-  .link-display {
-    flex-direction: column;
-  }
-  
-  .link-display p {
-    margin-bottom: 10px;
-  }
-  
-  .copy-btn {
-    margin-left: 0;
     width: 100%;
   }
 }

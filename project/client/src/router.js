@@ -4,6 +4,8 @@ import UserRegister from './views/Register.vue'
 import UserProfile from './views/Profile.vue'
 import DataWipe from './views/DataWipe.vue'
 import EvaluateWaste from './views/EvaluateWaste.vue'
+import ScanQR from './views/ScanQR.vue'
+import Rewards from './views/Rewards.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -37,6 +39,18 @@ const router = createRouter({
       name: 'evaluate',
       component: EvaluateWaste,
       meta: { hideBody: true }
+    },
+    {
+      path: '/scan',
+      name: 'scan',
+      component: ScanQR,
+      meta: { hideBody: true, requiresAuth: true }
+    },
+    {
+      path: '/rewards',
+      name: 'rewards',
+      component: Rewards,
+      meta: { hideBody: true, requiresAuth: true }
     }
   ]
 })
