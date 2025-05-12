@@ -24,34 +24,6 @@
       </main>
       <body class="container" v-if="!$route.meta.hideBody">
 
-        <div class="chat-box">
-        <config-provider :global-config="enConfig">
-          <t-chat
-            clear-history
-            :data="chatData"
-            :text-loading="loading"
-            :is-stream-load="isStreamLoad"
-            @clear="clearConfirm"
-          >
-            <template #name="{ item }">
-              {{ item?.name || 'admin' }}
-            </template>
-            <template #avatar="{ item }">
-              <t-avatar :image="item?.avatar" />
-            </template>
-            <template #datetime="{ item }">
-              {{ item?.datetime }}
-            </template>
-            <template #content="{ item }">
-              <t-chat-content :content="item?.content" />
-            </template>
-            <template #footer>
-              <t-chat-input :stop-disabled="isStreamLoad" @send="inputEnter" @stop="handleStop"/>
-            </template>
-          </t-chat>
-        </config-provider>
-        </div>
-
         <section id="problem" class="content-section">
               <h2>The Growing E-Waste Problem</h2>
               <img src="./images/e-waste-pile.jpg" alt="Pile of electronic waste" class="section-img">
