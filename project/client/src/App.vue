@@ -6,7 +6,7 @@
       <title>E-Waste Awareness | The Growing Electronic Waste Problem</title>
       <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
       <h1>E-Waste Awareness</h1>
-      <p>Understanding the global electronic waste crisis</p>
+      <p>Recycle your used electronic devices, e.g., batteries, mobile phones and computers</p>
       <nav>
         <router-link to="/">Home</router-link>
         <router-link to="/map">Map</router-link>
