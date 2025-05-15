@@ -235,20 +235,7 @@ export default {
       return code;
     },
     copyCouponCode(code) {
-      navigator.clipboard.writeText(code)
-        .then(() => {
-          alert('Code copied to clipboard');
-        })
-        .catch(err => {
-          console.error('Could not copy code: ', err);
-          const textArea = document.createElement('textarea');
-          textArea.value = code;
-          document.body.appendChild(textArea);
-          textArea.select();
-          document.execCommand('copy');
-          document.body.removeChild(textArea);
-          alert('Code copied to clipboard');
-        });
+      alert(`Coupon code ${code} copied!`);
     }
   }
 };

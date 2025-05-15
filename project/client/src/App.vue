@@ -161,9 +161,6 @@
             <template #name="{ item }">
               {{ item?.name || 'admin' }}
             </template>
-            <template #avatar="{ item }">
-              <t-avatar :image="item?.avatar" />
-            </template>
             <template #datetime="{ item }">
               {{ item?.datetime }}
             </template>
