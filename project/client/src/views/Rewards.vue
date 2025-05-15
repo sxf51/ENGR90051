@@ -81,9 +81,6 @@
 </template>
 
 <script>
-import axios from 'axios';
-import { HOST_URL, SERVER_PORT } from '../../config';
-
 export default {
   name: 'RewardsPage',
   data() {
@@ -96,113 +93,81 @@ export default {
     };
   },
   created() {
-    this.fetchUserData();
-    this.fetchAvailableCoupons();
-    this.fetchUserCoupons();
+    this.initMockData();
   },
   methods: {
-    async fetchUserData() {
-      const userEmail = localStorage.getItem('userEmail');
-      if (!userEmail) {
-        this.$router.push('/register');
-        return;
-      }
+    initMockData() {
+      this.userPoints = 100;
       
-      try {
-        const response = await axios.get(HOST_URL + `:${SERVER_PORT}/api/user/${userEmail}`);
-        this.userPoints = response.data.points || 0;
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      }
-    },
-    async fetchAvailableCoupons() {
-      try {
-        const response = await axios.get(HOST_URL + `:${SERVER_PORT}/api/coupons/available`);
-        this.availableCoupons = response.data;
-      } catch (error) {
-        console.error('Error fetching available coupons:', error);
-        // Mock data
-        this.availableCoupons = [
-          {
-            id: 'c1',
-            sponsor: 'Green Tech Co.',
-            title: 'New Electronics Discount',
-            type: 'percent',
-            value: 15,
-            description: 'Get 15% off any new eco-friendly electronic product',
-            expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days later
-            pointsCost: 100,
-            stock: 50
-          },
-          {
-            id: 'c2',
-            sponsor: 'Eco Appliances',
-            title: 'Energy-Efficient Appliance Offer',
-            type: 'amount',
-            value: 50,
-            description: '$50 off when you spend $300+ on energy-efficient appliances',
-            expiryDate: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000), // 60 days later
-            pointsCost: 80,
-            stock: 0
-          },
-          {
-            id: 'c3',
-            sponsor: 'Sustainable Energy Ltd.',
-            title: 'Solar Power Bank Discount',
-            type: 'percent',
-            value: 20,
-            description: '20% off any solar charging product',
-            expiryDate: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000), // 45 days later
-            pointsCost: 120,
-            stock: 30
-          },
-          {
-            id: 'c4',
-            sponsor: 'Eco Café',
-            title: 'Free Drink Voucher',
-            type: 'free',
-            value: 1,
-            description: 'Redeem for a free medium-sized drink at any location',
-            expiryDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), // 15 days later
-            pointsCost: 50,
-            stock: 20
-          }
-        ];
-      }
-    },
-    async fetchUserCoupons() {
-      const userEmail = localStorage.getItem('userEmail');
-      if (!userEmail) return;
+      this.availableCoupons = [
+        {
+          id: 'c1',
+          sponsor: 'Green Tech Co.',
+          title: 'New Electronics Discount',
+          type: 'percent',
+          value: 15,
+          description: 'Get 15% off any new eco-friendly electronic product',
+          expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days later
+          pointsCost: 100,
+          stock: 50
+        },
+        {
+          id: 'c2',
+          sponsor: 'Eco Appliances',
+          title: 'Energy-Efficient Appliance Offer',
+          type: 'amount',
+          value: 50,
+          description: '$50 off when you spend $300+ on energy-efficient appliances',
+          expiryDate: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000), // 60 days later
+          pointsCost: 80,
+          stock: 0
+        },
+        {
+          id: 'c3',
+          sponsor: 'Sustainable Energy Ltd.',
+          title: 'Solar Power Bank Discount',
+          type: 'percent',
+          value: 20,
+          description: '20% off any solar charging product',
+          expiryDate: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000), // 45 days later
+          pointsCost: 120,
+          stock: 30
+        },
+        {
+          id: 'c4',
+          sponsor: 'Eco Café',
+          title: 'Free Drink Voucher',
+          type: 'free',
+          value: 1,
+          description: 'Redeem for a free medium-sized drink at any location',
+          expiryDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), // 15 days later
+          pointsCost: 50,
+          stock: 20
+        }
+      ];
       
-      try {
-        const response = await axios.get(HOST_URL + `:${SERVER_PORT}/api/user/${userEmail}/coupons`);
-        this.userCoupons = response.data;
-      } catch (error) {
-        console.error('Error fetching user coupons:', error);
-        // Mock data
-        this.userCoupons = [
-          {
-            id: 'uc1',
-            sponsor: 'Green Tech Co.',
-            title: 'New Electronics Discount',
-            type: 'percent',
-            value: 15,
-            expiryDate: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000),
-            code: 'ECO15OFF',
-            used: false
-          },
-          {
-            id: 'uc2',
-            sponsor: 'Eco Café',
-            title: 'Free Drink Voucher',
-            type: 'free',
-            value: 1,
-            expiryDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
-            code: 'GREENCOFFEE123',
-            used: true
-          }
-        ];
-      }
+      this.userCoupons = [
+        {
+          id: 'uc1',
+          sponsor: 'Green Tech Co.',
+          title: 'New Electronics Discount',
+          type: 'percent',
+          value: 15,
+          expiryDate: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000),
+          code: 'ECO15OFF',
+          used: false
+        },
+        {
+          id: 'uc2',
+          sponsor: 'Eco Café',
+          title: 'Free Drink Voucher',
+          type: 'free',
+          value: 1,
+          expiryDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
+          code: 'GREENCOFFEE123',
+          used: true
+        }
+      ];
     },
     formatCouponValue(coupon) {
       switch (coupon.type) {
@@ -231,40 +196,27 @@ export default {
       this.selectedCoupon = null;
     },
     async confirmRedeem() {
-      const userEmail = localStorage.getItem('userEmail');
-      if (!userEmail || !this.selectedCoupon) return;
+      if (!this.selectedCoupon) return;
       
       try {
-        // Send redemption request to backend
-        await axios.post(HOST_URL + `:${SERVER_PORT}/api/user/${userEmail}/redeem`, {
-          couponId: this.selectedCoupon.id,
-          pointsCost: this.selectedCoupon.pointsCost
-        });
-        
-        // Update user points
         this.userPoints -= this.selectedCoupon.pointsCost;
         
-        // Update coupon stock
         const couponIndex = this.availableCoupons.findIndex(c => c.id === this.selectedCoupon.id);
         if (couponIndex >= 0) {
           this.availableCoupons[couponIndex].stock--;
         }
         
-        // Generate redemption code
         const couponCode = this.generateCouponCode(this.selectedCoupon.sponsor);
         
-        // Add the redeemed coupon to user's list
         this.userCoupons.unshift({
           ...this.selectedCoupon,
           code: couponCode,
           used: false
         });
         
-        // Close modal
         this.showConfirmModal = false;
         this.selectedCoupon = null;
         
-        // Show success message
         alert('Reward successfully redeemed!');
       } catch (error) {
         console.error('Error redeeming coupon:', error);
@@ -272,7 +224,6 @@ export default {
       }
     },
     generateCouponCode(sponsor) {
-      // Simple code generation logic, might need more complex logic in production
       const prefix = sponsor.slice(0, 3).toUpperCase();
       const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
       let code = prefix;
@@ -290,7 +241,6 @@ export default {
         })
         .catch(err => {
           console.error('Could not copy code: ', err);
-          // Fallback copy method
           const textArea = document.createElement('textarea');
           textArea.value = code;
           document.body.appendChild(textArea);

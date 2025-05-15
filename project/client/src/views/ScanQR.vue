@@ -126,9 +126,6 @@
 </template>
 
 <script>
-import axios from 'axios';
-import { HOST_URL, SERVER_PORT } from '../../config';
-
 export default {
   name: 'ScanQRPage',
   data() {
@@ -172,28 +169,37 @@ export default {
     };
   },
   created() {
-    this.fetchUserActivities();
+    this.initMockData();
   },
   methods: {
-    async fetchUserActivities() {
-      const userEmail = localStorage.getItem('userEmail');
-      if (!userEmail) {
-        this.$router.push('/register');
-        return;
-      }
-      
-      try {
-        const response = await axios.get(HOST_URL + `:${SERVER_PORT}/api/user/${userEmail}/activities`);
-        this.activities = response.data.slice(0, 5); // Only show the 5 most recent activities
-      } catch (error) {
-        console.error('Error fetching user activities:', error);
-      }
+    initMockData() {
+      this.activities = [
+        {
+          id: 'act1',
+          type: 'E-Waste Recycling',
+          location: 'Melbourne E-Waste Recycling Center',
+          points: 35,
+          date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) // 7 days ago
+        },
+        {
+          id: 'act2',
+          type: 'Battery Recycling',
+          location: 'CBD Recycling Station',
+          points: 15,
+          date: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000) // 15 days ago
+        },
+        {
+          id: 'act3',
+          type: 'Mobile Phone Recycling',
+          location: 'Melbourne E-Waste Recycling Center',
+          points: 50,
+          date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) // 30 days ago
+        }
+      ];
     },
     simulateLocationSearch() {
-      // Set status to searching
       this.userLocation.status = 'searching';
       
-      // Update location immediately without delay
       this.userLocation = {
         status: 'found',
         address: '120 Collins St, Melbourne VIC 3000',
@@ -213,7 +219,6 @@ export default {
       }
     },
     simulateScan() {
-      // Use the verified recycling point for the scan
       if (this.verifiedRecyclingPoint) {
         this.scanned = true;
         this.recyclingSpot = {
@@ -222,37 +227,24 @@ export default {
           address: this.verifiedRecyclingPoint.address
         };
         
-        // Generate random points (10-50)
         this.pointsAwarded = Math.floor(Math.random() * 41) + 10;
         
-        // Record activity
-        this.recordActivity();
+        this.recordLocalActivity();
       }
     },
-    async recordActivity() {
-      const userEmail = localStorage.getItem('userEmail');
-      if (!userEmail) return;
-      
-      try {
-        // Send record request to backend
-        await axios.post(HOST_URL + `:${SERVER_PORT}/api/user/${userEmail}/activities`, {
-          type: 'E-Waste Recycling',
-          location: this.recyclingSpot.name,
-          points: this.pointsAwarded,
-          spotId: this.recyclingSpot.id,
-          date: new Date()
-        });
-        
-        // Update user points
-        await axios.post(HOST_URL + `:${SERVER_PORT}/api/user/${userEmail}/points`, {
-          points: this.pointsAwarded,
-          source: 'recycling'
-        });
-        
-        // Refresh activity records
-        this.fetchUserActivities();
-      } catch (error) {
-        console.error('Error recording activity:', error);
+    recordLocalActivity() {
+      const newActivity = {
+        id: 'act' + (this.activities.length + 1),
+        type: 'E-Waste Recycling',
+        location: this.recyclingSpot.name,
+        points: this.pointsAwarded,
+        date: new Date()
+      };
+
+      this.activities.unshift(newActivity);
+
+      if (this.activities.length > 5) {
+        this.activities = this.activities.slice(0, 5);
       }
     },
     resetScan() {
