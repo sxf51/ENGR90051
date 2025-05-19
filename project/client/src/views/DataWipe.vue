@@ -56,6 +56,13 @@
             </li>
           </ul>
         </div>
+        
+        <!-- 添加设备提交表单 -->
+        <device-submission-form 
+          page-type="datawipe"
+          :device-types="Object.keys(deviceCategories)"
+          @device-submitted="handleDeviceSubmission"
+        />
       </div>
       
       <!-- 数据擦除指南 - 当用户已选择设备时显示 -->
@@ -93,8 +100,13 @@
 </template>
 
 <script>
+import DeviceSubmissionForm from '../components/DeviceSubmissionForm.vue';
+
 export default {
   name: 'DataWipe',
+  components: {
+    DeviceSubmissionForm
+  },
   data() {
     return {
       loading: true,
@@ -451,6 +463,10 @@ export default {
         
         this.filteredDevices.push(...matches);
       });
+    },
+    handleDeviceSubmission(device) {
+      // 处理设备提交逻辑
+      console.log('Device submitted:', device);
     }
   }
 };

@@ -71,6 +71,13 @@
         <button @click="resetForm" class="reset-btn">Reset</button>
         <button @click="evaluateDevice" class="evaluate-btn">Evaluate</button>
       </div>
+      
+      <!-- 添加设备提交表单 -->
+      <device-submission-form 
+        page-type="evaluate"
+        :device-types="deviceTypes"
+        @device-submitted="handleDeviceSubmission"
+      />
     </div>
     
     <!-- 评估结果 -->
@@ -115,8 +122,13 @@
 </template>
 
 <script>
+import DeviceSubmissionForm from '../components/DeviceSubmissionForm.vue';
+
 export default {
   name: 'EvaluateWaste',
+  components: {
+    DeviceSubmissionForm
+  },
   data() {
     return {
       showResult: false,
@@ -459,6 +471,10 @@ export default {
       this.availableModels = [];
       this.deviceValue = 0;
       this.showResult = false;
+    },
+    handleDeviceSubmission(device) {
+      // 处理设备提交后的逻辑
+      console.log('Device submitted:', device);
     }
   }
 };
